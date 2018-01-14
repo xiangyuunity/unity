@@ -1,0 +1,18 @@
+using UnityEngine;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Xml;
+using System.Xml.Serialization;
+
+[XmlRoot("table")]
+public class $classNameData
+{
+    [XmlArray("data"), XmlArrayItem("row")]
+    public List<$classNameVo> $classNameInfo = new List<$classNameVo>();
+}
+
+public class $classNameVo
+{
+    $attr
+}

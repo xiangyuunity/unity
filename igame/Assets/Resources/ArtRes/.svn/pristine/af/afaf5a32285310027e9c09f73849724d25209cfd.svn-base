@@ -1,0 +1,125 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "MobaGo/Water CG" 
+{
+	Properties 
+	{
+		_Color("_Color", Color) = (1,1,1,1)
+		_Texture1("_Texture1", 2D) = "black" {}
+		_DistortionMap1("_DistortionMap1", 2D) = "black" {}
+		_DistortionPower("_DistortionPower", Range(0,0.02) ) = 0
+		_Reflection("_Reflection", Cube) = "black" {}
+		_Scroll("_Scroll", Vector) = (1,1,1,1)
+		_ReflectPower("_ReflectPower", Range(0,1) ) = 0
+
+	}
+    SubShader {
+		Tags{  "RenderType"="Opaque" }
+        Pass 
+		{
+
+            CGPROGRAM
+			#pragma target 2.0
+			#pragma only_renderers d3d9 opengl gles gles3 d3d11 d3d11_9x metal
+
+            #pragma vertex vert
+            #pragma fragment frag
+			#pragma multi_compile_fog
+            #include "UnityCG.cginc"
+			#include "AutoLight.cginc"
+
+			struct appdata {
+				float4 vertex : POSITION;
+				float3 normal : NORMAL;
+				float4 texcoord : TEXCOORD0;
+				float4 texcoord1 : TEXCOORD1;
+			};
+
+            struct v2f {
+			  float4 pos : SV_POSITION;
+			  float4 pack0 : TEXCOORD0; // _Texture1 _DistortionMap1
+			  half3 worldRefl : TEXCOORD1;
+			  float4 lmap : TEXCOORD2;
+			  //SHADOW_COORDS(3)
+			  UNITY_FOG_COORDS(3)
+            };
+			
+			float4 _Texture1_ST;
+			float4 _DistortionMap1_ST;
+
+            v2f vert (appdata v)
+            {
+			  v2f o;
+			  UNITY_INITIALIZE_OUTPUT(v2f,o);
+			  o.pos = UnityObjectToClipPos (v.vertex);
+			  o.pack0.xy = TRANSFORM_TEX(v.texcoord, _Texture1);
+			  o.pack0.zw = TRANSFORM_TEX(v.texcoord, _DistortionMap1);
+			  float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+			  fixed3 worldNormal = UnityObjectToWorldNormal(v.normal);
+			  //o.worldNormal = worldNormal;
+			  float3 worldViewDir = UnityWorldSpaceViewDir(worldPos);
+			  o.worldRefl = reflect(-worldViewDir, worldNormal);
+			  o.lmap.xy = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;
+
+			  //TRANSFER_SHADOW(o); // pass shadow coordinates to pixel shader
+			  UNITY_TRANSFER_FOG(o,o.pos); // pass fog coordinates to pixel shader
+			  return o;
+            }
+			
+			fixed4 _Color;
+			sampler2D _Texture1;
+			sampler2D _DistortionMap1;
+			samplerCUBE _Reflection;
+			float _ReflectPower;
+			half _DistortionPower;	
+			half4 _Scroll;	
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+			  float2 uv_Texture1 = i.pack0.xy;
+			  float2 uv_DistortionMap1 = i.pack0.zw;
+			  float3 lightDir = _WorldSpaceLightPos0.xyz;
+			  float3 worldRefl = i.worldRefl;
+
+			  float4 DistortNormal = tex2D(_DistortionMap1, uv_DistortionMap1+_Scroll.xy*_Time.x);
+			  // Multiply Tex2DNormal effect by DistortionPower
+			  float2 FinalDistortion = DistortNormal * _DistortionPower;
+
+			  float2 MainTexUV=(uv_Texture1.xy);	
+			  float4 MaskTex = tex2D(_Texture1, MainTexUV);		
+			  // Apply Distorion in MainTex
+			  float4 DistortedMainTex=tex2D(_Texture1, MainTexUV + lerp(FinalDistortion, float2(0.0, 0.0), MaskTex.a));
+
+			  // Merge Textures, Texture and Color
+			  float4 col  = lerp(_Color, DistortedMainTex, MaskTex.a); 			
+
+
+			  DistortNormal =  tex2D(_DistortionMap1,(uv_DistortionMap1+_Scroll.xy*_Time.x)  ); 
+			  float4 DistortNormal2 =  tex2D(_DistortionMap1, (uv_DistortionMap1+_Scroll.zw*_Time.x*1.45) ); 
+			  float4 ff = (DistortNormal + DistortNormal2);
+
+			  half3 reflection = texCUBE( _Reflection, worldRefl +  ff.xyz).rgb*_ReflectPower; 
+
+			  float3 emission = lerp(reflection, half3(0.0, 0.0, 0.0), MaskTex.a);
+
+			  // compute lighting & shadowing factor
+			  //UNITY_LIGHT_ATTENUATION(atten, i, worldPos);
+			  // lightmaps
+			  fixed4 lmtex = UNITY_SAMPLE_TEX2D(unity_Lightmap, i.lmap.xy);
+			  fixed3 lm = DecodeLightmap (lmtex);
+			  fixed4 c = col;
+
+			  // combine lightmaps with realtime shadows
+			  c.rgb *= lm;
+
+			  c.rgb += emission;
+			  UNITY_APPLY_FOG(i.fogCoord, c); // apply fog
+			  //UNITY_OPAQUE_ALPHA(c.a);
+			  return c;
+            }
+            ENDCG
+
+        }
+    }
+}

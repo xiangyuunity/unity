@@ -1,0 +1,32 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/StageMachine/GameStageMachine.cs">
+    <Files>
+      <File FileName="Assets/Scripts/StageMachine/BattleStage.cs" Line="15" Column="3" />
+      <File FileName="Assets/Scripts/UI/common/UGUIEventTrigger.cs" Line="11" Column="25" />
+      <File FileName="Assets/Scripts/Common/TimerManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/GameMain.cs" Line="13" Column="33" />
+      <File FileName="Assets/Scripts/Camera/SceneCameraCtl.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Character/StateMachine/PlayerAtkState.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Character/StateMachine/PlayerStateBase.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Character/StateMachine/PlayerStateMgr.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Character/StateMachine/PlayerWalkState.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Character/StateMachine/PlayerMoveState.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Character/StateMachine/PlayerIdleState.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Character/StateMachine/PlayerDeadState.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Character/StateMachine/StateMachine.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Character/MyPlayer.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Character/PlayerBase.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Character/RoleMgr.cs" Line="6" Column="33" />
+      <File FileName="Assets/Scripts/Common/Pool/PoolObj.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Common/AESingleton.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Common/MonoBehaviourSingleton.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/UI/common/UIManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/StageMachine/GameStageMachine.cs" Line="8" Column="42" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
